@@ -1,0 +1,47 @@
+version: '3'
+
+# This is for development purposes
+services:
+  uberlike-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../volumes/gateway:/home/java/uberlike-gateway
+
+  consul-server:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-server
+    restart: always
+    volumes:
+      - ../volumes/consul/server1.json:/consul/config/server1.json:ro
+      - ../volumes/consul/certs/:/consul/config/certs/:ro
+    networks:
+      - consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    command: "agent -bootstrap-expect=1"
+
+  consul-client:
+    image: hashicorp/consul:1.11.2
+    container_name: consul-client
+    restart: always
+    volumes:
+     - ../volumes/consul/client.json:/consul/config/client.json:ro
+     - ../volumes/consul/certs/:/consul/config/certs/:ro
+    networks:
+      - consul
+    command: "agent"
+
+  zipkin:
+    image: 'openzipkin/zipkin:latest'
+    ports:
+      - '9411'
+
+networks:
+  consul:
+    driver: bridge
