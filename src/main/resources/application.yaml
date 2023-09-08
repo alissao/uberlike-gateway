@@ -1,0 +1,16 @@
+hello:
+  world: "props from spring"
+spring:
+  application:
+    name: uberlike-gateway
+  config:
+    import: 'optional:consul:'
+  cloud:
+    consul:
+      host: consul-server
+      config:
+        prefix: config
+        format: 'YAML'
+management:
+  security:
+    enabled: false
