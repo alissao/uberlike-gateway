@@ -3,6 +3,8 @@ hello:
 spring:
   application:
     name: uberlike-gateway
+    security:
+      clientId: uberlike-client
   config:
     import: 'optional:consul:'
   cloud:
@@ -11,6 +13,26 @@ spring:
       config:
         prefix: config
         format: 'YAML'
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak-login:
+            issuer-uri: http://keycloak:8080/realms/Uberlike
+        registration:
+          keycloak-login:
+            client-id: uberlike-client
+            client-secret: HjhQWt0Ehs4e7OvhwMtYSZxHjckb3W9R
+            scope: openid, profile, email, offline_access # last one for refresh tokens
+            authorization-uri: http://keycloak:8080/oauth2/v1/authorize?prompt=consent
+            provider: keycloak-login
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/Uberlike
 management:
   security:
-    enabled: false
+    enabled: true

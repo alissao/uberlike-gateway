@@ -1,14 +1,18 @@
 package com.vehicletrackergateway.uberlike.interfaces.http;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vehicletrackergateway.uberlike.infrastructure.config.YAMLConfig;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 public class DiscoveryClientController {
@@ -27,13 +31,18 @@ public class DiscoveryClientController {
   }
 
   @GetMapping("/ping")
-  public String ping() {
-    return "pong";
+  public Mono<String> ping() {
+    return Mono.just("pong");
   }
 
   @GetMapping("/getConfig")
-  public String getConfig() {
-    return yamlConfig.getWorld();
+  public Mono<String> getConfig() {
+    return Mono.just(yamlConfig.getWorld());
   }
+
+  @GetMapping("hello")
+	Mono<String> hello(@AuthenticationPrincipal Principal auth) {
+		return Mono.just(String.format("Hello %s!", auth.getName()));
+	}
   
 }
